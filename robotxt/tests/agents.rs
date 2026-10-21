@@ -63,6 +63,24 @@ fn shared_group() {
 }
 
 #[test]
+fn extensions_do_not_split_shared_group() {
+    for extension in [
+        "Crawl-delay: 2",
+        "Crawl-delay: invalid",
+        "Sitemap: https://a.com/sitemap.xml",
+        "Unknown: value",
+    ] {
+        let txt = format!("User-Agent: a\n{extension}\nUser-Agent: b\nDisallow: /private\n");
+        for agent in ["a", "b"] {
+            assert!(
+                !Robots::parse(txt.as_bytes(), agent).is_allowed("/private"),
+                "{extension} must not split the group for {agent}"
+            );
+        }
+    }
+}
+
+#[test]
 fn rules_before_group() {
     let txt = b"Disallow: /1\nUser-Agent: *\nDisallow: /2";
     let r = Robots::parse(txt, "a");

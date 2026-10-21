@@ -51,7 +51,6 @@ pub fn parse(directives: &[Directive<'_>], agent: Agent<'_>) -> Robots {
                 }
             }
             Directive::CrawlDelay(value) => {
-                in_agents = false;
                 if applies && let Some(delay) = parse_delay(value) {
                     crawl_delay = Some(crawl_delay.map_or(delay, |prev| prev.min(delay)));
                 }
